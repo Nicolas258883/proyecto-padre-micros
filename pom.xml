@@ -1,0 +1,80 @@
+	<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  
+  <!-- mi POM padre hereda la configuración de Spring Boot.  -->
+  <parent>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-parent</artifactId>
+    <version>2.5.4</version>
+    <relativePath/>
+</parent>
+
+
+  <groupId>com.nicolas.microservicios</groupId>
+  <artifactId>proyecto-padre-micros</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  
+  <packaging>pom</packaging>
+  
+    <name>proyecto-padre-micros</name>
+  
+  <!--  modelVersion   : versión del modelo de POM que usa Maven.
+	    groupId        : identifica el grupo/proyecto.
+		artifactId     : identifica este artefacto concreto.
+        version        : versión del proyecto.
+        packaging = pom: indica que este proyecto actúa como padre/agregador.
+        name           : nombre descriptivo. 
+   -->
+   
+	   <!-- properties define valores comunes, como si fueran variables del POM. Luego los hijos podrán usarlas así => ${java.version} -->
+	   <properties>
+		    <java.version>17</java.version>
+		    <spring-cloud.version>2020.0.3</spring-cloud.version>
+		    <samer.version>0.24.0</samer.version>
+	   </properties>
+	   
+     <!--dependencyManagement => el padre centraliza las versiones de las dependencias, pero no obliga a todos los hijos a usarlas.-->
+		<dependencyManagement>
+		    <dependencies>
+		        <dependency>
+		            <groupId>com.h2database</groupId>
+		            <artifactId>h2</artifactId>
+		            <version>2.2.224</version>
+		            <scope>runtime</scope> 
+		            <!--    
+		            scope = compile → se necesita para compilar y ejecutar. Es el valor por defecto.
+					scope = runtime → principalmente se necesita al ejecutar.
+					scope = test → solo se utiliza en los tests.
+					scope = provided → se necesita para compilar, pero se espera que el servidor o entorno lo proporcione al ejecutar.
+					-->
+		        </dependency>
+		    </dependencies>
+		</dependencyManagement>
+		<!--
+		profile permite activar una configuración concreta solo cuando tú quieras.
+		En este ejemplo, cuando actives el perfil pruebas, Maven tendrá disponible esta propiedad:
+		Lo activarías así: .\mvnw.cmd clean install -Ppruebas -DskipTests
+		-->
+		<profiles>
+		    <profile>
+		        <id>pruebas</id>		
+		        <properties>
+		            <entorno>pruebas</entorno>
+		        </properties>
+		    </profile>
+		</profiles>
+
+		
+		<!-- significa que el padre agrupa esos tres microservicios.  
+		    mvn clean install => Maven construirá también los módulos declarados en <modules>, 
+		    respetando el orden necesario según sus dependencias.
+		    modules en el padre → indica qué hijos forman parte de la construcción conjunta.
+		    parent en el hijo → indica de qué POM padre hereda.
+		 -->		
+		<modules>
+		    <module>../usuario-serviceMicro</module>
+		    <module>../carro-service</module>
+		    <module>../moto-service</module>
+		</modules>
+
+</project>
